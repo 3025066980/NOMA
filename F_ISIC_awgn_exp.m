@@ -1,6 +1,6 @@
 clc; clear variables;
 N = 10^5;
-SNR = 0:50;
+SNR = 0:40;
 P=1;
 a1 = 0.70; a2 = 0.25; a3 = 0.05;
 ber1=zeros([1 length(SNR)]);
@@ -49,13 +49,12 @@ for u = 1:length(SNR)
 end
 % plot BER curves
 colorstring = 'bmr';
-figure(2)
+figure(1)
 semilogy(SNR, ber1,'+--','Color', colorstring(1), 'linewidth', 1); 
 ylim([10^(-5) 1])
 hold on; grid on;
 semilogy(SNR, ber2,'+--','Color', colorstring(2), 'linewidth', 1);
 semilogy(SNR, ber3,'+--','Color', colorstring(3), 'linewidth', 1); 
-hold on;
 % snr = db2pow(SNR);      %SNR range in linear scale
 % theoryBer = qfunc(sqrt(1*snr));
 % semilogy(SNR+17,theoryBer,'*-','Color',colorstring(5),'linewidth',1);

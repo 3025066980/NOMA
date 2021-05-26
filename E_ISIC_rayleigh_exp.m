@@ -1,14 +1,14 @@
-clc;
-clear;
+clc;clear;
 N = 10^5;         
 SNR = 0:50;      
 P=1;
 a1 = 0.70; a2 = 0.25; a3 = 0.05;
-bber1=zeros(100,51);
-bber2=zeros(100,51);
-bber3=zeros(100,51);
-for kk = 1:100
-    h = raylrnd(0.75,1,3);
+j=100;
+bber1=zeros(j,51);
+bber2=zeros(j,51);
+bber3=zeros(j,51);
+for kk = 1:j
+    h = raylrnd(1,1,3);
     h = sort(h);
 
     for u = 1:length(SNR)
@@ -52,7 +52,7 @@ for kk = 1:100
         rem23 = y3 - sqrt(a1*P)*x31_est; %Extract useless signal 1 from y3
         x32_est = ones(1,N);
         x32_est(rem23<0) = -1;
-        rem33=y3 - sqrt(a1*P)*x31_est - sqrt(a2*P)*x32_est; %Extract useless signal 2 from y3
+        rem33=rem23 - sqrt(a2*P)*x32_est; %Extract useless signal 2 from y3
         %Decode x3 from rem
         x3_hat = zeros(1,N);
         x3_hat(rem33>0) = 1;%Final bits for user 3

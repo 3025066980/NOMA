@@ -9,11 +9,10 @@ variance=10.^(-SNR./10);
 mtx1=[1 1 1;1 -1 1;1 1 -1;1 -1 -1];
 mtx2=[1 1;1 -1];
 mtx3=1;
-M=3;OMEGA=1;zeta=0.001;
+M=3;OMEGA=1;zeta=0;
 [ls1, ls2, ls3]=deal(4, 2, 1);
 [sumt1, sumt2,sumt3]=deal(0,0,0);
 gamma=P./variance;
-gamma2=P./(variance+0.00075);
 %correct power
 for h =1:M 
         mtx1(:,h)=mtx1(:,h)*A(h);
@@ -95,11 +94,11 @@ for h=1:length(SNR)
     vector3(h)=sum1_3;
 end
 colorstring = 'bmr';
-figure(2)
+figure(4)
 semilogy(SNR,vector1,'o-','Color', colorstring(1),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','b')
-hold on;grid on; ylim([10^(-5) 1]);
-semilogy(SNR,vector2,'s-','Color', colorstring(2),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','m')
-semilogy(SNR,vector3,'h-','Color', colorstring(3),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','r')
+hold on;grid on; ylim([10^(-5) 0.446]);
+semilogy(SNR,vector2,'s-','Color', colorstring(2),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','m')%7
+semilogy(SNR,vector3,'h-','Color', colorstring(3),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','r')%11
 legend('User 1 \alpha_1 = 0.70','User 2 \alpha_2 = 0.20','User 3 \alpha_3 = 0.05','Location','southwest');
 title('BER for mth user in Rayleigh fading channel');
 xlabel('SNR');
