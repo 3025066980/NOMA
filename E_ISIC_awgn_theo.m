@@ -11,16 +11,20 @@ M=3;OMEGA=1;zeta=0.001;
 [ls1, ls2, ls3]=deal(4, 2, 1);
 [sumt1, sumt2,sumt3]=deal(0,0,0);
 omega21=OMEGA*zeta*0;
-omega22=OMEGA*zeta*0.75;
-omega23=OMEGA*zeta*(0.70+0.25);
+omega22=OMEGA*zeta*A1^2;
+omega23=OMEGA*zeta*(A1^2+A2^2);
 %% Error
-SNR = 0:50;
-variance=10.^(-SNR./10);
-% variance=P./SNR;% variance=db2pow(SNR);
-gamma=P./variance;
-SNR1=P./(variance+omega21);
-SNR2=P./(variance+omega22);
-SNR3=P./(variance+omega23);
+SNR = 0:40;
+% variance=db2pow(SNR);%error
+gamma=10.^(SNR./10);
+variance=P./gamma;%error
+% gamma0=P./variance;
+gamma1=P./(variance + omega21);
+gamma2=P./(variance + omega22);
+gamma3=P./(variance + omega23);
+snr1=pow2db(gamma1);
+snr2=pow2db(gamma2);
+snr3=pow2db(gamma3);
 %% correct power
 for h =1:M 
         mtx1(:,h)=mtx1(:,h)*A(h);
@@ -33,37 +37,36 @@ mtx3=A(3)*mtx3;
 for j=1:ls1
     Y=mtx1(j,:);
     beta=sum(Y)/sqrt(P);
-    betasic=beta.*sqrt(P./(P+variance.*omega21));
-    sumt1=sumt1+qfunc(betasic.*sqrt(gamma));
+    betasic=beta.*sqrt(P./(P+gamma1.*omega21));
+    sumt1=sumt1+qfunc(betasic.*sqrt(gamma1));
 end
 for j=1:ls2
-    Y=mtx2(j,:);
-    beta=sum(Y)/sqrt(P);
-    betasic=beta.*sqrt(P./(P+SNR1*omega22));
-    sumt2=sumt2+qfunc(betasic.*sqrt(gamma));
+   Y=mtx2(j,:);
+   beta=sum(Y)/sqrt(P);
+   betasic=beta.*sqrt(P./(P+gamma2.*omega22));
+   sumt2=sumt2+qfunc(betasic.*sqrt(gamma2));
 end
 for j=1:ls3
-    Y=mtx3(j,:);
-    beta=sum(Y)/sqrt(P);
-    betasic=beta.*sqrt(P./(P+SNR3*omega23));
-    sumt3=sumt3+qfunc(betasic.*sqrt(SNR3));
+   Y=mtx3(j,:);
+   beta=sum(Y)/sqrt(P);
+   betasic=beta.*sqrt(P./(P+gamma3.*omega23));
+   sumt3=sumt3+qfunc(betasic.*sqrt(gamma3));
 end
 %% Plot
-k1=1/(ls1)*sumt1;
-k2=1/(ls2)*sumt2;
-k3=1/(ls3)*sumt3;
-figure(1)
-colorstring = 'bmr';
-semilogy(pow2db(SNR1),k1,'-','Color', colorstring(1),'LineWidth',1)
-ylim([10^(-5) 1])
-hold on;grid on;
+k1=1/ls1 * sumt1;
+k2=1/ls2 * sumt2;
+k3=1/ls3 * sumt3;
 figure(2)
-semilogy(pow2db(SNR2),k2,'-','Color', colorstring(2),'LineWidth',1);hold on%+6
-figure(3)
-semilogy(pow2db(SNR3),k3,'-','Color', colorstring(3),'LineWidth',1)%+3
+colorstring = 'bmr';
+semilogy(snr1,k1,'-','Color', colorstring(1),'LineWidth',1),hold on;grid on;
+ylim([10^(-5) 1]);xlim([0 inf])
+% figure(3)
+semilogy(snr2,k2,'-','Color', colorstring(2),'LineWidth',1)
+% figure(1)
+semilogy(snr3,k3,'-','Color', colorstring(3),'LineWidth',1)
 legend('User 1 \alpha_1 = 0.70','User 2 \alpha_2 = 0.25','User 3 \alpha_4 = 0.05','Location','southwest');
 txt1 = 'Simulation -----,Theoritical: Solid Line';
 text(6,3.43e-05,txt1)
-title('BER gr   aph for NOMA in AWGN channel-theoretical');
-xlabel('SNR');
+title('BER graph for NOMA in AWGN channel-theoretical');
+xlabel('SNR(dB)');
 ylabel('BER');

@@ -95,10 +95,12 @@ for h=1:length(SNR)
 end
 colorstring = 'bmr';
 figure(4)
+b=(SNR+7.8)./SNR;
+c=(SNR+11)./SNR;
 semilogy(SNR,vector1,'o-','Color', colorstring(1),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','b')
 hold on;grid on; ylim([10^(-5) 0.446]);
-semilogy(SNR,vector2,'s-','Color', colorstring(2),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','m')%7
-semilogy(SNR,vector3,'h-','Color', colorstring(3),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','r')%11
+semilogy(SNR.*b,vector2,'s-','Color', colorstring(2),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','m')%7
+semilogy(SNR.*c,vector3,'h-','Color', colorstring(3),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','r')%11
 legend('User 1 \alpha_1 = 0.70','User 2 \alpha_2 = 0.20','User 3 \alpha_3 = 0.05','Location','southwest');
 title('BER for mth user in Rayleigh fading channel');
 xlabel('SNR');

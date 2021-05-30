@@ -8,7 +8,7 @@ bber1=zeros(j,51);
 bber2=zeros(j,51);
 bber3=zeros(j,51);
 for kk = 1:j
-    h = raylrnd(1,1,3);
+    h = raylrnd(0.75,1,3);
     h = sort(h);
 
     for u = 1:length(SNR)
@@ -63,11 +63,9 @@ for kk = 1:j
         bber3(kk,u) = biterr(x3,x3_hat)/N;
     end
 end
-
 ber1 = mean(bber1);
 ber2 = mean(bber2);
 ber3 = mean(bber3);
-
 colorstring = 'bmr';
 figure(4)
 semilogy(SNR, ber1,'+--','Color', colorstring(1), 'linewidth', 1); 
