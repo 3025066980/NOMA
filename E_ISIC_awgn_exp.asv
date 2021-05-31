@@ -1,7 +1,5 @@
 % clc; clear variables;
-N = 10^5;
-SNR = 0:40;
-P=1;
+N = 10^5; SNR = 0:40; P=1; OMEGA=1; zeta=0.001;
 a1 = 0.70; a2 = 0.25; a3 = 0.05;
 ber1=zeros([1 length(SNR)]);
 ber2=zeros([1 length(SNR)]);
@@ -12,32 +10,38 @@ x3 = randi([0 1],1,N);
 xmod1 = 2*x1-1;
 xmod2 = 2*x2-1;
 xmod3 = 2*x3-1;
+omega21=OMEGA*zeta*0;
+omega22=OMEGA*zeta*0.70;
+omega23=OMEGA*zeta*0.95;
 for u = 1:length(SNR)
-    x = sqrt(a1*P)*xmod1 + sqrt(a2*P)*xmod2+ sqrt(a3*P)*xmod3;
-    y1 = awgn(x,SNR(u),'measured');
-    y2 = awgn(x,SNR(u),'measured');
-    y3 = awgn(x,SNR(u),'measured');
+    xx = sqrt(a1*P)*xmod1 + sqrt(a2*P)*xmod2+ sqrt(a3*P)*xmod3;
+    noise1 = wgn(1,length(xx),10*log10(1/(omega21+10^(SNR(u)/10))));
+    noise2 = wgn(1,length(xx),10*log10(1/(omega22+10^((u)/10))));
+    noise3 = wgn(1,length(xx),10*log10(1/(omega23+10^(snr3(u)/10))));
+    y11 = xx + noise1;
+    y22 = xx + noise2;
+    y33 = xx + noise3;
 
     %AT USER 1
     %Direct decoding of x from y1
     x1_hat = ones(1,N);         
-    x1_hat(y1 < 0) = 0;%Final bits for user 1
+    x1_hat(y11 < 0) = 0;%Final bits for user 1
     
     %AT USER 2
     x21_est = ones(1,N);
-    x21_est(y2 < 0) = -1;       %Estimate user 1's signal first
-    rem2 = y2 - sqrt(a1*P)*x21_est;%Extract useless signal 1 from y2
+    x21_est(y22 < 0) = -1;       %Estimate user 1's signal first
+    rem2 = y22 - sqrt(a1*P)*x21_est;%Extract useless signal 1 from y2
     %Decode x2 from rem without signal x1
     x2_hat = zeros(1,N);
     x2_hat(rem2>0) = 1;%Final bits for user 2
     
     %AT USER 3
     x31_est = ones(1,N);
-    x31_est(y3 < 0) = -1; %Estimate user 1's signal first
-    rem23 = y3 - sqrt(a1*P)*x31_est; %Extract useless signal 1 from y3
+    x31_est(y33 < 0) = -1; %Estimate user 1's signal first
+    rem23 = y33 - sqrt(a1*P)*x31_est; %Extract useless signal 1 from y3
     x32_est = ones(1,N);
     x32_est(rem23<0) = -1;
-    rem33=y3 - sqrt(a1*P)*x31_est - sqrt(a2*P)*x32_est; %Extract useless signal 2 from y3
+    rem33=rem23 - sqrt(a2*P)*x32_est; %Extract useless signal 2 from y3
     %Decode x3 from rem
     x3_hat = zeros(1,N);
     x3_hat(rem33>0) = 1;%Final bits for user 3
