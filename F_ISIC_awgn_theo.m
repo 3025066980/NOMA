@@ -1,4 +1,4 @@
-% clear, clc;
+clear, clc;
 P=1;
 [a1, a2, a3] = deal(0.70, 0.25, 0.05);
 a=[a1, a2, a3];
@@ -11,8 +11,8 @@ M=3;OMEGA=1;zeta=0.001;
 [ls1, ls2, ls3]=deal(4, 2, 1);
 [sumt1, sumt2,sumt3]=deal(0,0,0);
 omega21=OMEGA*zeta*0;
-omega22=OMEGA*zeta*A1^2;
-omega23=OMEGA*zeta*(A1^2+A2^2);
+omega22=OMEGA*zeta*0.70;
+omega23=OMEGA*zeta*(0.95);
 SNR = 0:40;
 % variance=db2pow(SNR);%error
 gamma=10.^(SNR./10);
@@ -37,19 +37,19 @@ for j=1:ls1
     Y=mtx1(j,:);
     beta=sum(Y)/sqrt(P);
     betasic=beta.*sqrt(P./(P+gamma1.*omega21));
-    sumt1=sumt1+qfunc(betasic.*sqrt(gamma));
+    sumt1=sumt1+qfunc(betasic.*sqrt(gamma1));
 end
 for j=1:ls2
    Y=mtx2(j,:);
    beta=sum(Y)/sqrt(P);
    betasic=beta.*sqrt(P./(P+gamma2.*omega22));
-   sumt2=sumt2+qfunc(betasic.*sqrt(gamma));
+   sumt2=sumt2+qfunc(betasic.*sqrt(gamma2));
 end
 for j=1:ls3
    Y=mtx3(j,:);
    beta=sum(Y)/sqrt(P);
    betasic=beta.*sqrt(P./(P+gamma3.*omega23));
-   sumt3=sumt3+qfunc(betasic.*sqrt(gamma));
+   sumt3=sumt3+qfunc(betasic.*sqrt(gamma3));
 end
 % Plot
 k1=1/ls1 * sumt1;
