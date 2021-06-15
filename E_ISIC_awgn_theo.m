@@ -12,7 +12,7 @@ M=3;OMEGA=1;zeta=0.001;
 [sumt1, sumt2,sumt3]=deal(0,0,0);
 omega21=OMEGA*zeta*0;
 omega22=OMEGA*zeta*0.70;
-omega23=OMEGA*zeta*(0.95);
+omega23=OMEGA*zeta*0.95;
 SNR = 0:40;
 % variance=db2pow(SNR);%error
 gamma=10.^(SNR./10);
@@ -45,12 +45,10 @@ for j=1:ls2
    betasic=beta.*sqrt(P./(P+gamma2.*omega22));
    sumt2=sumt2+qfunc(betasic.*sqrt(gamma2));
 end
-for j=1:ls3
-   Y=mtx3(j,:);
-   beta=sum(Y)/sqrt(P);
-   betasic=beta.*sqrt(P./(P+gamma3.*omega23));
-   sumt3=sumt3+qfunc(betasic.*sqrt(gamma3));
-end
+Y=mtx3;
+beta=sum(Y)/sqrt(P);
+betasic=beta.*sqrt(P./(P+gamma3.*omega23));
+sumt3=sumt3+qfunc(betasic.*sqrt(gamma3));
 % Plot
 k1=1/ls1 * sumt1;
 k2=1/ls2 * sumt2;
