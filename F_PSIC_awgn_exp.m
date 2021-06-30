@@ -58,7 +58,7 @@ for u = 1:length(SNR)
 end
 %plot BER curves
 colorstring = 'bmrg';
-figure(2)
+figure(1)
 semilogy(SNR, ber1,'+--','Color', colorstring(1), 'linewidth', 1); 
 hold on; grid on;
 semilogy(SNR, ber2,'+--','Color', colorstring(2), 'linewidth', 1);
