@@ -4,15 +4,24 @@ P=1;
 a=[a1, a2, a3];
 [A1, A2 ,A3] = deal(sqrt(P*a1),sqrt(P*a2),sqrt(P*a3));
 A=[A1, A2 ,A3];
-SNR = 0:50;
-variance=10.^(-SNR./10);
 mtx1=[1 1 1;1 -1 1;1 1 -1;1 -1 -1];
 mtx2=[1 1;1 -1];
 mtx3=1;
 M=3;OMEGA=1;zeta=0;
 [ls1, ls2, ls3]=deal(4, 2, 1);
 [sumt1, sumt2,sumt3]=deal(0,0,0);
-gamma=P./variance;
+SNR = 0:50;
+omega21=OMEGA*zeta*0;
+omega22=OMEGA*zeta*0.70;
+omega23=OMEGA*zeta*0.95;
+gamma=10.^(SNR./10);
+variance=P./gamma;
+gamma1=P./(variance + omega21);
+gamma2=P./(variance + omega22);
+gamma3=P./(variance + omega23);   
+snr1=pow2db(gamma1);
+snr2=pow2db(gamma2);
+snr3=pow2db(gamma3);
 %correct power
 for h =1:M 
         mtx1(:,h)=mtx1(:,h)*A(h);
@@ -37,7 +46,7 @@ for h=1:length(SNR)
                beta=sum(Y)/sqrt(P);
                omega2=OMEGA*zeta*0;
                betaplus=beta.*sqrt(P./(P+gamma*omega2));
-               omega=sqrt( 1+( (2*(k+1)) ./ (betaplus.^2*gamma(h)*1) ) );
+               omega=sqrt(1+((2*(k+1))./(betaplus.^2*gamma(h)*1)));
                p1=(ita*(omega-1)*(-1)^(t+k)*nchoosek((M-m),t)*nchoosek((m+t-1),k)) / (2^(M-m+1)*(k+1)*omega);
                sum1_1=sum1_1+p1;
            end
@@ -60,7 +69,7 @@ for h=1:length(SNR)
                beta=sum(Y)/sqrt(P);
                omega2=OMEGA*zeta*(0.70);
                betaplus=beta.*sqrt(P./(P+gamma*omega2));%*0.5
-               omega=sqrt( 1+( (2*(k+1)) ./ (betaplus.^2*gamma(h)*1) ) );
+               omega=sqrt(1+((2*(k+1))./(betaplus.^2*gamma(h)*1)));
                p1=(ita*(omega-1)*(-1)^(t+k)*nchoosek((M-m),t)*nchoosek((m+t-1),k)) / (2^(M-m+1)*(k+1)*omega);
                sum1_1=sum1_1+p1;
            end
@@ -83,7 +92,7 @@ for h=1:length(SNR)
                beta=sum(Y)/sqrt(P);
                omega2=OMEGA*zeta*(0.70+0.25);
                betaplus=beta.*sqrt(P./(P+gamma*omega2));%*0.7
-               omega=sqrt( 1+( (2*(k+1)) ./ (betaplus.^2*gamma(h)*1) ) );
+               omega=sqrt(1+((2*(k+1))./(betaplus.^2*gamma(h)*1)));
                p1=(ita*(omega-1)*(-1)^(t+k)*nchoosek((M-m),t)*nchoosek((m+t-1),k)) / (2^(M-m+1)*(k+1)*omega);
                sum1_1=sum1_1+p1;
            end
@@ -95,12 +104,10 @@ for h=1:length(SNR)
 end
 colorstring = 'bmr';
 figure(4)
-b=(SNR+7.8)./SNR;
-c=(SNR+11)./SNR;
-semilogy(SNR,vector1,'o-','Color', colorstring(1),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','b')
+semilogy(snr1,vector1,'o-','Color', colorstring(1),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','b')
 hold on;grid on; ylim([10^(-5) 0.446]);
-semilogy(SNR.*b,vector2,'s-','Color', colorstring(2),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','m')%7
-semilogy(SNR.*c,vector3,'h-','Color', colorstring(3),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','r')%11
+semilogy(snr2,vector2,'s-','Color', colorstring(2),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','m')%7
+semilogy(snr3,vector3,'h-','Color', colorstring(3),'LineWidth',1,'MarkerSize',4,'MarkerFaceColor','r')%11
 legend('User 1 \alpha_1 = 0.70','User 2 \alpha_2 = 0.20','User 3 \alpha_3 = 0.05','Location','southwest');
 title('BER for mth user in Rayleigh fading channel');
 xlabel('SNR');
