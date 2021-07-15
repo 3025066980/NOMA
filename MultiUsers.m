@@ -1,5 +1,8 @@
 clc; clear variables;
 user=input('Number of users: ');
+histograma=input('Plot Histogram? ');
+graph=input('Plot graphs? ');
+reqsnr=input('Histogram in SNR= ');
 a1=3/4; N = 1e5; SNR = 0:40; P=1;
 powcoef=zeros(1,user);
 powcoef(1)=a1;
@@ -10,7 +13,10 @@ powcoef(user)=1-sum(powcoef);
 % powcoef=[0.70,0.25 0.05]; N=1e5; SNR=0:40;P=1;
 ber=zeros(user,N);
 biter=zeros(user, length(SNR));
-em=zeros(user, length(SNR));
+ems=cell(length(SNR),1);
+for z=1:length(SNR)
+    ems{z}=zeros(user, N);
+end
 for u = 1:length(SNR)
     x=zeros(user,N);
     xmod=zeros(user,N);
@@ -43,11 +49,12 @@ for u = 1:length(SNR)
             ber(1,:)=x1_hat;
         else
             for o=1:n-1
-                x_hat = ones(1,N);
-                x_hat(y(n,:) < 0) = -1;
-                y(n,:)=y(n,:)-sqrt(powcoef(o)*P)*x_hat;
+                x_hat = ones(1,N);%SIC process
+                x_hat(y(n,:) < 0) = -1;%Estiamate
+                y(n,:)=y(n,:)-sqrt(powcoef(o)*P)*x_hat;%Subtracting m-1 user to m
+                ems{u}(n,:)=ems{u}(n,:)+(xmod(n,:)-x_hat);
             end
-            x_zero=ones(1,N);
+            x_zero=ones(1,N);%BPSK demodulation
             x_zero(y(n,:)<0)=0;
             ber(n,:)=x_zero;
         end
@@ -57,10 +64,27 @@ for u = 1:length(SNR)
     end
 end
 colorstring = 'bmryk';
-figure(1)
-for v=1:user
-    txt = ['User ',num2str(v),'\alpha=',num2str(powcoef(v))];
-    semilogy(SNR, biter(v,:),'+--', 'linewidth', 1,'DisplayName',txt);
-    grid on; hold on;
+if graph==1
+    figure(1)
+    for v=1:user
+        txt = ['U_{',num2str(v),'} \alpha=',num2str(powcoef(v))];
+        semilogy(SNR, biter(v,:),'+--', 'linewidth', 1,'DisplayName',txt);
+        grid on; hold on;
+    end
+    title('BER in awgn channel')
+    xlabel('SNR(in dB)')
+    ylabel('BER')
+    legend show
 end
-legend show
+if histograma==1
+    figure(2)
+    title(['e_m for SNR=',num2str(reqsnr)])
+    for b=2:user
+        txt = ['e_{',num2str(b),'}'];
+        histogram(ems{reqsnr}(b,:),'DisplayName',txt)
+        legend show
+        title(['e_m for SNR=',num2str(reqsnr)])
+        pause
+        hold on;
+    end
+end
