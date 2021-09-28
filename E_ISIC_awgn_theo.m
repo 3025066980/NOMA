@@ -1,4 +1,4 @@
-clear, clc;
+% clear, clc;
 P=1;
 [a1, a2, a3] = deal(0.70, 0.25, 0.05);
 a=[a1, a2, a3];
@@ -11,7 +11,7 @@ M=3;OMEGA=1;zeta=0.001;
 [ls1, ls2, ls3]=deal(4, 2, 1);
 [sumt1, sumt2,~]=deal(0,0,0);
 omega21=OMEGA*zeta*0;
-omega22=OMEGA*zeta*0.70;
+omega22=OMEGA*zeta*0.75;
 omega23=OMEGA*zeta*0.95;
 SNR = 0:40;
 gamma=10.^(SNR./10);
@@ -52,16 +52,19 @@ sumt3=qfunc(betasic.*sqrt(gamma));
 k1=1/ls1 .* sumt1;
 k2=1/ls2 .* sumt2;
 k3=1/ls3 .* sumt3;
+%%
 figure(1)
 colorstring = 'bmrk';
-semilogy(snr1,k1,'-','Color', colorstring(1),'LineWidth',1),hold on;grid on;
+semilogy(SNR,k1,'-','Color', colorstring(1),'LineWidth',1),hold on;grid on;
 ylim([10^(-5) 1]);xlim([0 inf])
-semilogy(snr2,k2,'-','Color', colorstring(2),'LineWidth',1);
-semilogy(snr3,k3,'-','Color', colorstring(3),'LineWidth',1);hold on
-snr = db2pow(SNR);
-theoryBer = qfunc(sqrt(snr));
-semilogy(SNR+13,theoryBer,'*-','Color',colorstring(4),'linewidth',1);
-ylim([10^(-5) 1])
+figure(2)
+semilogy(SNR,k2,'-','Color', colorstring(2),'LineWidth',1),hold on;grid on;
+figure(3)
+semilogy(SNR,k3,'-','Color', colorstring(3),'LineWidth',1);hold on;grid on;
+% snr = db2pow(SNR);
+% theoryBer = qfunc(sqrt(snr));
+% semilogy(SNR+13,theoryBer,'*-','Color',colorstring(4),'linewidth',1);
+% ylim([10^(-5) 1])
 legend('User 1 \alpha_1 = 0.70','User 2 \alpha_2 = 0.25','User 3 \alpha_4 = 0.05','BER for BPSK','Location','southwest');
 txt1 = 'Simulation -----,Theoritical: Solid Line';
 text(6,3.43e-05,txt1)

@@ -16,14 +16,14 @@ for u = 1:length(SNR)
     xmod3 = 2*x3-1;
     xx = sqrt(a1*P)*xmod1 + sqrt(a2*P)*xmod2+ sqrt(a3*P)*xmod3;
     noise1 = wgn(1,length(xx),10*log10(1/(10^(SNR(u)/10))));
-    noise2 = wgn(1,length(xx),10*log10(0.30/(10^(SNR(u)/10))));
-    noise3 = wgn(1,length(xx),10*log10(0.05/(10^(SNR(u)/10))));
+    noise2 = wgn(1,length(xx),10*log10(1/(10^(SNR(u)/10))));
+    noise3 = wgn(1,length(xx),10*log10(1/(10^(SNR(u)/10))));
 
     y11 = xx + noise1;
     y22 = xx + noise2;
     y33 = xx + noise3;
 %     y11=awgn(xx,SNR(u),1);
-%     y22=awgn(xx,SNR(u),0.30);
+%     y22=awgn(xx,SNR(u),'measured');
 %     y33=awgn(xx,SNR(u),0.05);
 
     %AT USER 1
@@ -58,7 +58,7 @@ for u = 1:length(SNR)
     x3_hat = zeros(1,N);
     x3_hat(rem33>0) = 1;%Final bits for user 3
 
-    %Estimate BER
+	%Estimate BER
     ber1(u) = biterr(x1,x1_hat)/N;
     ber2(u) = biterr(x2,x2_hat)/N;
     ber3(u) = biterr(x3,x3_hat)/N;
@@ -92,12 +92,17 @@ end
 %     j=j+1;
 %     xlim([-3 3])
 % end
+%%
 colorstring = 'bmryk';
 figure(1)
 semilogy(SNR, ber1,'+--','Color', colorstring(1), 'linewidth', 1); 
 hold on; grid on;
+figure(2)
 semilogy(SNR, ber2,'+--','Color', colorstring(2), 'linewidth', 1);
+hold on; grid on;
+figure(3)
 semilogy(SNR, ber3,'+--','Color', colorstring(3), 'linewidth', 1); 
+hold on; grid on;
 legend('User 1','User 2','User 3','Location','northeast');
 title('BER graph for NOMA in AWGN channel-imperfect SIC-experimental');
 xlabel('SNR(dB)');
